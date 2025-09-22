@@ -3,4 +3,6 @@ project(Lab1_task4)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Lab1_task4 main.cpp)
+add_executable(Lab1_task4 main.cpp
+        stacks.h
+        stacks.cpp)
