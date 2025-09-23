@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <compare>
 
 enum class Suit { Hearts, Diamonds, Clubs, Spades };
 
@@ -15,5 +14,5 @@ struct Card {
     }
 
     // Вивід карти
-    friend std::ostream& operator<<(std::ostream& os, const Card& c);
+     friend std::ostream& operator<<(std::ostream& os, const Card& c);
 };
