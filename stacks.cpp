@@ -16,13 +16,13 @@ double StackAnalyzer::average() const {
     if (stackLengths.empty()) return 0.0;
 
     double sum = 0.0;
-    for (int len: stackLengths) {
+    for (auto len: stackLengths) {
         sum += len;
     }
     return sum / stackLengths.size();
 }
 
-
+// Doxygen - для документації
 double StackAnalyzer::median() const {
     if (stackLengths.empty()) return 0.0;
 
@@ -40,7 +40,7 @@ int StackAnalyzer::mode() const {
     if (stackLengths.empty()) return 0;
 
     map<int, int> counts;
-    for (int len: stackLengths) ++counts[len];
+    for (auto len: stackLengths) ++counts[len];
 
     int maxCount = 0;
     int modeVal = 0;
@@ -50,6 +50,7 @@ int StackAnalyzer::mode() const {
             modeVal = pair.first;
         }
     }
+    // використати std::max_element()
     return modeVal;
 }
 
@@ -61,9 +62,7 @@ map<int, double> StackAnalyzer::frequency() const {
     map<int, int> counts;
     for (int len : stackLengths) ++counts[len];
 
-    for (auto it = counts.begin(); it != counts.end(); ++it) {
-        int len = it->first;
-        int count = it->second;
+    for (auto [len, count]: counts) {
         freq[len] = static_cast<double>(count) * 100 / stackLengths.size();
     }
 

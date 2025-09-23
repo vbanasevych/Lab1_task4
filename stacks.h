@@ -27,5 +27,4 @@ public:
     double getMedian() const { return median(); }
     int getMode() const { return mode(); }
 
-
 };
