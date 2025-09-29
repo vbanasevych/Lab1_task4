@@ -8,11 +8,11 @@ struct Card {
     Suit suit;
     int value;
 
-    // Порівняння лише за value
+
     auto operator<=>(const Card& other) const {
         return value <=> other.value;
     }
+    std::string toString() const;
 
-    // Вивід карти
      friend std::ostream& operator<<(std::ostream& os, const Card& c);
 };
