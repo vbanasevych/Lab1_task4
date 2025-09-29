@@ -1,14 +1,13 @@
 #include "stacks.h"
+#include "deck_dealer.h"
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
 
-using namespace std;
-
 StackAnalyzer::StackAnalyzer(int cardsPerSuit, int n)
     : cardsPerSuit(cardsPerSuit), n(n) {
-    if (cardsPerSuit <= 0 || n <= 0) {
-        throw invalid_argument("cardsPerSuit and n must be positive");
+    if (cardsPerSuit < 0 || n < 0) {
+        throw std::invalid_argument("cardsPerSuit and n must be positive");
     }
 }
 
@@ -22,12 +21,11 @@ double StackAnalyzer::average() const {
     return sum / stackLengths.size();
 }
 
-// Doxygen - для документації
 double StackAnalyzer::median() const {
     if (stackLengths.empty()) return 0.0;
 
-    vector<int> temp = stackLengths;
-    sort(temp.begin(), temp.end());
+    std::vector<int> temp = stackLengths;
+    std::sort(temp.begin(), temp.end());
     size_t mid = temp.size() / 2;
 
     if (temp.size() % 2 == 0) {
@@ -39,32 +37,87 @@ double StackAnalyzer::median() const {
 int StackAnalyzer::mode() const {
     if (stackLengths.empty()) return 0;
 
-    map<int, int> counts;
-    for (auto len: stackLengths) ++counts[len];
-
-    int maxCount = 0;
-    int modeVal = 0;
-    for (const auto &pair : counts) {
-        if (pair.second > maxCount) {
-            maxCount = pair.second;
-            modeVal = pair.first;
-        }
+    std::map<int, int> counts;
+    for (auto len: stackLengths) {
+        ++counts[len];
     }
-    // використати std::max_element()
-    return modeVal;
+
+    auto maxPair = std::max_element(
+        counts.begin(),
+        counts.end(),
+        [](const auto &a, const auto &b) {
+            return a.second < b.second;
+        }
+    );
+
+    return maxPair->first;
 }
 
-map<int, double> StackAnalyzer::frequency() const {
-    map<int, double> freq;
+std::map<int, double> StackAnalyzer::frequency() const {
+    std::map<int, double> freq;
 
     if (stackLengths.empty()) return freq;
 
-    map<int, int> counts;
-    for (int len : stackLengths) ++counts[len];
+    std::map<int, int> counts;
+    for (int len: stackLengths) {
+        ++counts[len];
+    }
 
-    for (auto [len, count]: counts) {
-        freq[len] = static_cast<double>(count) * 100 / stackLengths.size();
+    for (const auto &pair: counts) {
+        freq[pair.first] = static_cast<double>(pair.second) * 100 / stackLengths.size();
     }
 
     return freq;
+}
+
+void StackAnalyzer::printStatistics() const {
+    std::cout << "Average: " << average() << std::endl;
+    std::cout << "Median: " << median() << std::endl;
+    std::cout << "Mode: " << mode() << std::endl;
+    std::cout << "Frequencies: " << std::endl;
+    for (const auto &pair: frequency()) {
+        std::cout << "Length " << pair.first << ": " << pair.second << "%\n";
+    }
+}
+
+void StackAnalyzer::dealAndAnalyze() {
+    stackLengths.clear();
+    DeckDealer dealer(cardsPerSuit);
+
+    if (n<=0) return;
+
+    Card prevCard = dealer();
+    int currentLength = 1;
+
+    for (int i = 1; i < n; ++i) {
+        Card nextCard = dealer();
+        if (nextCard > prevCard) {
+            ++currentLength;
+        } else {
+            stackLengths.push_back(currentLength);
+            currentLength = 1;
+        }
+        prevCard = nextCard;
+    }
+
+    stackLengths.push_back(currentLength);
+}
+
+void StackAnalyzer::experiment(const std::vector<int> &cardsPerSuitValues, int n) {
+    std::cout << "Experiment: effect of cards per suit on stack statistics" << std::endl;
+    for (int cps: cardsPerSuitValues) {
+        std::cout << "Cards per suit: " << cps << std::endl;
+
+        StackAnalyzer tempAnalyzer(cps, n);
+        tempAnalyzer.dealAndAnalyze();
+
+        std::cout << "Average length: " << tempAnalyzer.getAverage() << std::endl;
+        std::cout << "Median length: " << tempAnalyzer.getMedian() << std::endl;
+
+        auto freq = tempAnalyzer.frequency();
+        std::cout << "Frequencies (%):" << std::endl;
+        for (const auto &pair: freq) {
+            std::cout << "Length " << pair.first << ": " << pair.second << "%\n";
+        }
+    }
 }
