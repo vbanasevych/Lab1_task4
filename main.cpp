@@ -1,3 +1,5 @@
+// компідятор - g++
+
 #include "stacks.h"
 #include "deck_dealer.h"
 #include <iostream>

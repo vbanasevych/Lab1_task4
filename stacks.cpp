@@ -81,10 +81,11 @@ void StackAnalyzer::printStatistics() const {
 }
 
 void StackAnalyzer::dealAndAnalyze() {
+    if (n <= 0)
+        throw runtime_error("Cannot deal cards: n <= 0");
+
     stackLengths.clear();
     DeckDealer dealer(cardsPerSuit);
-
-    if (n<=0) return;
 
     Card prevCard = dealer();
     int currentLength = 1;
@@ -104,8 +105,24 @@ void StackAnalyzer::dealAndAnalyze() {
 }
 
 void StackAnalyzer::experiment(const std::vector<int> &cardsPerSuitValues, int n) {
+    if (cardsPerSuitValues.empty())
+        throw invalid_argument("cardsPerSuitValues cannot be empty");
+    if (n <= 0)
+        throw invalid_argument("n must be > 0");
+
     std::cout << "Experiment: effect of cards per suit on stack statistics" << std::endl;
     for (int cps: cardsPerSuitValues) {
+        if (!cin) {
+            cerr << "Cps must be a number." << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+
+        if (cps <= 0) {
+            cerr << "Skipping invalid cardsPerSuit: " << cps << endl;
+            continue;
+        }
         std::cout << "Cards per suit: " << cps << std::endl;
 
         StackAnalyzer tempAnalyzer(cps, n);
