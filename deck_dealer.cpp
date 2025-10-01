@@ -16,7 +16,6 @@ Card DeckDealer::operator()() {
         throw std::logic_error("Deck is unexpectedly empty!");
     }
     if (index >= deck.size()) {
-        // автоматичний ресет
         newDeck();
     }
     return deck[index++];
