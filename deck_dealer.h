@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "card.h"
@@ -12,7 +11,7 @@ class DeckDealer {
     std::mt19937 rng;
 
 public:
-    DeckDealer(int cps);
+    explicit DeckDealer(int cps);
 
     Card operator()();
 
