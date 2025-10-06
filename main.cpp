@@ -1,4 +1,4 @@
-// компідятор - g++
+// Compiler: g++ (C++20)
 
 #include "stacks.h"
 #include "deck_dealer.h"
